@@ -1,12 +1,4 @@
-# =============================================================
-# Palmer Penguins Explorer  -  FINISHED REFERENCE VERSION
-# Run with:  streamlit run app.py
-#
-# Every section is labeled with the same letter as its block in
-# Streamlit_Snippet_Menu.ipynb, so you can see where each piece goes.
-# =============================================================
-
-# ---------- Block A: Imports & page setup ----------
+# Imports & page setup
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -17,7 +9,7 @@ st.title("Palmer Penguins Explorer")
 st.caption("An interactive look at 344 penguins from three islands in Antarctica.")
 
 
-# ---------- Block B: Load the data (cached) ----------
+# Load the data (cached)
 @st.cache_data
 def load_data():
     df = pd.read_csv("data/penguins.csv")
@@ -28,7 +20,7 @@ def load_data():
 df = load_data()
 
 
-# ---------- Block C: Sidebar filters ----------
+# Sidebar filters
 st.sidebar.header("Filters")
 
 species = st.sidebar.multiselect(
@@ -60,7 +52,7 @@ if filtered.empty:
     st.stop()
 
 
-# ---------- Block D: KPI metrics row ----------
+# KPI metrics row
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Penguins", len(filtered))
 col2.metric("Avg body mass", f"{filtered['body_mass_g'].mean():,.0f} g")
@@ -70,11 +62,11 @@ col4.metric("Species shown", filtered["species"].nunique())
 st.divider()
 
 
-# ---------- Block I: Tabs layout (charts live inside the tabs) ----------
+# Tabs layout (charts live inside the tabs)
 tab_charts, tab_data, tab_predict = st.tabs(["Charts", "Data", "Predict"])
 
 with tab_charts:
-    # ---------- Block E: Scatter plot with pick-your-own axes ----------
+    # Scatter plot with pick-your-own axes
     st.subheader("Compare any two measurements")
     numeric_cols = ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]
     c1, c2 = st.columns(2)
@@ -89,14 +81,14 @@ with tab_charts:
 
     left, right = st.columns(2)
 
-    # ---------- Block F: Histogram ----------
+    # Histogram
     with left:
         st.subheader("Distribution")
         hist_col = st.selectbox("Measurement", numeric_cols, index=3, key="hist")
         fig = px.histogram(filtered, x=hist_col, color="species", barmode="overlay", nbins=30)
         st.plotly_chart(fig)
 
-    # ---------- Block G: Bar chart of counts ----------
+    # Bar chart of counts
     with right:
         st.subheader("Penguins per island")
         counts = filtered.groupby(["island", "species"]).size().reset_index(name="count")
@@ -104,7 +96,7 @@ with tab_charts:
         st.plotly_chart(fig)
 
 with tab_data:
-    # ---------- Block J: Data table + download button ----------
+    # Data table + download button
     st.subheader("The filtered data")
     st.dataframe(filtered, hide_index=True)
     st.download_button(
@@ -115,7 +107,7 @@ with tab_data:
     )
 
 with tab_predict:
-    # ---------- Block K (bonus): Predict the species with machine learning ----------
+    # Predict the species with machine learning
     from sklearn.ensemble import RandomForestClassifier
 
     @st.cache_resource
@@ -145,7 +137,7 @@ with tab_predict:
     st.success(f"Prediction: **{prediction}** ({confidence:.0%} confident)")
 
 
-# ---------- Block L: "About this data" expander ----------
+# "About this data" expander
 with st.expander("About this data"):
     st.markdown(
         """
